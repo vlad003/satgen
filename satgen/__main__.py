@@ -7,4 +7,4 @@ from . import Instance, Distribution
 sat = Instance(n, m, k)
 sat.generate()
 
-print(sat.clauses)
+print(sat)

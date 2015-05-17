@@ -27,3 +27,11 @@ class Instance:
         else:
             # TODO
             pass
+
+    def __str__(self):
+        text = "p cnf {} {}\n".format(self.num_vars, self.num_clauses)
+        def list_join(l):
+            return " ".join(map(str, l)) + " 0"
+
+        text += "\n".join(map(list_join, self.clauses.values()))
+        return text
