@@ -8,8 +8,16 @@ from . import Instance, Distribution
         help='Number of clauses.')
 @click.option('--clause-size', '-k', default=3, type=int,
         help='The size of each clause.')
-def main(variables, clauses, clause_size):
-    sat = Instance(variables, clauses, clause_size)
+@click.option('--distribution', '-d', default="uniform",
+        type=click.Choice(['uniform', 'powerlaw']),
+        help='The distribution of variables amongst clauses')
+def main(variables, clauses, clause_size, distribution):
+    if distribution == "uniform":
+        d = Distribution.uniform
+    elif distribution == "powerlaw":
+        d = Distribution.powerlaw
+
+    sat = Instance(variables, clauses, clause_size, d)
     sat.generate()
 
     click.echo(str(sat))

@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import numpy
 
 class Distribution(Enum):
     uniform = 0
@@ -21,7 +22,20 @@ class Instance:
             for m in range(self.num_clauses):
                 clause = random.sample(self.variables, self.k)
                 for i, var in enumerate(clause):
-                    clause[i] = var * (-1 ** random.randint(0, 1))
+                    clause[i] = var * ((-1) ** random.randint(0, 1))
+
+                self.clauses[m] = clause
+        elif self.distribution is Distribution.powerlaw:
+            for m in range(self.num_clauses):
+                probs = numpy.random.power(4, self.num_vars)
+                chosen = filter(lambda v: probs[v-1] > 0.5,
+                                self.variables)
+                clause = list(chosen)[:self.k]
+                print(clause)
+                for i, var in enumerate(clause):
+                    clause[i] = var * ((-1) ** numpy.random.randint(2))
+
+                print(clause)
 
                 self.clauses[m] = clause
         else:
