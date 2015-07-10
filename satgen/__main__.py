@@ -11,13 +11,15 @@ from . import Instance, Distribution
 @click.option('--distribution', '-d', default="uniform",
         type=click.Choice(['uniform', 'powerlaw']),
         help='The distribution of variables amongst clauses')
-def main(variables, clauses, clause_size, distribution):
+@click.option('--beta', '-b', default=0.75, type=float,
+        help='The beta value used in the powerlaw distribution')
+def main(variables, clauses, clause_size, distribution, beta):
     if distribution == "uniform":
         d = Distribution.uniform
     elif distribution == "powerlaw":
         d = Distribution.powerlaw
 
-    sat = Instance(variables, clauses, clause_size, d)
+    sat = Instance(variables, clauses, clause_size, d, beta)
     sat.generate()
 
     click.echo(str(sat))
