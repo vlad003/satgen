@@ -29,13 +29,15 @@ class Instance:
         elif self.distribution is Distribution.powerlaw:
             for m in range(self.num_clauses):
                 probs = numpy.random.power(self.beta, self.num_vars)
-                chosen = filter(lambda v: probs[v-1] > 0.5,
-                                self.variables)
-                clause = list(chosen)[:self.k]
+                combined = zip(range(1, self.num_vars+1), probs)
+                ordered = sorted(combined, key=lambda x: x[1])
+                clause = list(map(lambda x: x[0], ordered[:self.k]))
+
                 for i, var in enumerate(clause):
                     clause[i] = var * ((-1) ** numpy.random.randint(2))
 
                 self.clauses[m] = clause
+
         else:
             # TODO
             pass
