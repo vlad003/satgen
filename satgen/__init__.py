@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import math
 import numpy
 
 class Distribution(Enum):
@@ -28,11 +29,9 @@ class Instance:
                 self.clauses[m] = clause
         elif self.distribution is Distribution.powerlaw:
             for m in range(self.num_clauses):
-                probs = numpy.random.power(self.beta, self.num_vars)
-                combined = zip(range(1, self.num_vars+1), probs)
-                ordered = sorted(combined, key=lambda x: x[1])
-                clause = list(map(lambda x: x[0], ordered[:self.k]))
+                samples = self.__gen_power_samples()
 
+                clause = sorted(samples)
                 for i, var in enumerate(clause):
                     clause[i] = var * ((-1) ** numpy.random.randint(2))
 
@@ -49,3 +48,22 @@ class Instance:
 
         text += "\n".join(map(list_join, self.clauses.values()))
         return text
+
+    def __gen_power_samples(self):
+        samples = set()
+
+        while len(samples) < self.k:
+            sample = numpy.random.power(self.beta)
+            var = self.__sample_to_var(sample, self.num_vars)
+            samples.add(var)
+
+        return samples
+
+    def __sample_to_var(self, sample, num_vars, interval=(0.0, 1.0)):
+        """
+        Associates the samples in the interval with a variable from 1 to n
+        """
+        start, end = interval
+        bucket_size = (end-start)/num_vars
+
+        return math.ceil(sample / bucket_size)
