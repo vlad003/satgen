@@ -1,5 +1,5 @@
 import click
-from . import Instance, Distribution
+from .instance import UniformInstance, PowerInstance
 
 @click.command()
 @click.option('--variables', '-n', default=5, type=int,
@@ -15,11 +15,10 @@ from . import Instance, Distribution
         help='The beta value used in the powerlaw distribution')
 def main(variables, clauses, clause_size, distribution, beta):
     if distribution == "uniform":
-        d = Distribution.uniform
+        sat = UniformInstance(variables, clauses, clause_size)
     elif distribution == "powerlaw":
-        d = Distribution.powerlaw
+        sat = PowerInstance(beta, variables, clauses, clause_size)
 
-    sat = Instance(variables, clauses, clause_size, d, beta)
     sat.generate()
 
     click.echo(str(sat))
