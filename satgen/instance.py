@@ -35,11 +35,17 @@ class PowerInstance(Instance):
         self.beta = beta
 
     def generate(self):
+
+        def sample_to_var(sample):
+            subinterval = (1.0-0.0)/self.num_vars
+            # we're using ceil below because our vars are 1..n, not 0..n-1
+            return math.ceil(sample / subinterval)
+
         for m in range(self.num_clauses):
             samples = set()
             while len(samples) < self.k:
                 sample = numpy.random.power(self.beta)
-                var = self.__sample_to_var(sample, self.num_vars)
+                var = sample_to_var(sample)
                 samples.add(var)
 
             clause = sorted(samples)
@@ -47,12 +53,3 @@ class PowerInstance(Instance):
                 clause[i] = var * ((-1) ** numpy.random.randint(2))
 
             self.clauses[m] = clause
-
-    def __sample_to_var(self, sample, num_vars, interval=(0.0, 1.0)):
-        """
-        Associates the samples in the interval with a variable from 1 to n
-        """
-        start, end = interval
-        bucket_size = (end-start)/num_vars
-
-        return math.ceil(sample / bucket_size)
