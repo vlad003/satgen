@@ -25,7 +25,7 @@ class UniformInstance(Instance):
         for m in range(self.num_clauses):
             clause = sorted(random.sample(self.variables, self.k))
             for i, var in enumerate(clause):
-                clause[i] = var * ((-1) ** random.randint(0, 1))
+                clause[i] = var * ((-1) ** numpy.random.randint(2))
 
             self.clauses[m] = clause
 
