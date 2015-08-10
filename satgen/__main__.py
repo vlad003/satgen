@@ -12,7 +12,7 @@ from .instance import UniformInstance, PowerInstance
         type=click.Choice(['uniform', 'powerlaw']),
         help='The distribution of variables amongst clauses')
 @click.option('--beta', '-b', default=0.75, type=float,
-        help='The beta value used in the powerlaw distribution')
+        help='The beta value used in the powerlaw distribution. Range [1,inf)')
 def main(variables, clauses, clause_size, distribution, beta):
     if distribution == "uniform":
         sat = UniformInstance(variables, clauses, clause_size)

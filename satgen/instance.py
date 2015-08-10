@@ -30,7 +30,7 @@ class UniformInstance(Instance):
             self.clauses[m] = clause
 
 class PowerInstance(Instance):
-    def __init__(self, beta=0.75, *args, **kwargs):
+    def __init__(self, beta=1, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.beta = beta
 
