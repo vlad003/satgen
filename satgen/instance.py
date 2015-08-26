@@ -1,5 +1,6 @@
 import random
 import math
+import bisect
 import numpy
 
 class Instance:
@@ -30,23 +31,29 @@ class UniformInstance(Instance):
             self.clauses[m] = clause
 
 class PowerInstance(Instance):
-    def __init__(self, beta=1, *args, **kwargs):
+    def __init__(self, beta=0.5, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.beta = beta
 
     def generate(self):
 
-        def sample_to_var(sample):
-            subinterval = (1.0-0.0)/self.num_vars
-            # we're using ceil below because our vars are 1..n, not 0..n-1
-            return math.ceil(sample / subinterval)
+        norm = sum(i**(-self.beta) for i in range(1, self.num_vars+1))
+        prob_i = lambda i: i**(-self.beta) / norm
+
+        cumulative_probs = [0] * (self.num_vars+1)
+        for var in range(1, self.num_vars+1):
+            cumulative_probs[var] = cumulative_probs[var-1] + prob_i(var)
+
+        # remove the initial 0 since that was just for the computation above
+        cumulative_probs.pop(0)
 
         for m in range(self.num_clauses):
             samples = set()
             while len(samples) < self.k:
-                sample = numpy.random.power(self.beta)
-                var = sample_to_var(sample)
-                samples.add(var)
+                sample = numpy.random.uniform()
+                var = bisect.bisect_left(cumulative_probs, sample) + 1
+                if var is not None:
+                    samples.add(var)
 
             clause = sorted(samples)
             for i, var in enumerate(clause):
